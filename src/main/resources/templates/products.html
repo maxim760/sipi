@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<div th:replace="~{fragments/template :: head}"></div>
+<body>
+<div th:replace="~{fragments/template :: header}"></div>
+<div class="container center-align">
+    <div class="title-row">
+        <h3 class="title">Список всех продуктов</h3>
+        <div style="display: flex; justify-content: center; column-gap: 12px" class="btns-group">
+            <a sec:authorize="hasAuthority('ADMIN')" href="#create-product" class="waves-effect waves-light btn-small  modal-trigger">Создать новый продукт</a>
+        </div>
+    </div>
+    <div class="row wrap" style="display: flex; align-items: stretch">
+        <h3 class="col s12 center-x" style="width: 100%" th:if="${products.size() == 0}">Товары не найдены</h3>
+        <div class="col s12 m6 l4" th:each="item : ${products}">
+            <div class="card horizontal m-0 card-goods">
+                <div class="card-stacked">
+                    <div class="card-content">
+                        <p class="card-content-item">Название - <bold class="card-content-item-value"><span th:text="${item.getName()}"></span></bold></p>
+                        <p class="card-content-item">Количество - <bold class="card-content-item-value"><span th:text="${item.getCount()}"></span></bold></p>
+                    </div>
+                    <div sec:authorize="hasAuthority('ADMIN')" class="card-action between wrap">
+                        <a class="waves-effect waves-light mini-btn btn-small modal-trigger" th:href="'#' + ${item.getId()} + '_1'">Изменить продукт</a>
+                    </div>
+                    <div th:id="${item.getId()} + '_1'" class="modal">
+                        <form class="col s12 m12" method="post" th:action="@{'/products/' + ${item.getId()} + '/edit'}" th:object="${newProductItem}">
+                            <div class="modal-content">
+                                <h5 class="mb-2">Измените продукт!</h5>
+                                <div class="row mb-1">
+                                    <div class="input-field col m6 s12">
+                                        <input placeholder=" "  required id="nameEdit" name="name"  th:value="${item.getName()}" type="text" class="validate">
+                                        <label for="nameEdit">Название</label>
+                                    </div>
+                                    <div class="input-field col m6 s12">
+                                        <input placeholder=" "  required id="countEdit" name="count"  th:value="${item.getCount()}" type="number" class="validate">
+                                        <label for="countEdit">Кол-во</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer mb-1">
+                                <button type="submit" class="modal-close waves-effect waves-green btn-flat">Сохранить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="create-product" class="modal">
+        <form class="col s12 m12" method="post" th:action="@{/products/create}" th:object="${newProductItem}">
+            <div class="modal-content">
+                <h5 class="mb-2">Создайте новый продукт!</h5>
+                <div class="row mb-1">
+                    <div class="input-field col m6 s12">
+                        <input placeholder=" "  required id="nameCreate" name="name" th:field="*{name}" type="text" class="validate">
+                        <label for="nameCreate">Название</label>
+                    </div>
+                    <div class="input-field col m6 s12">
+                        <input placeholder=" "  required id="countCreate" name="count" th:field="*{count}" type="number" class="validate">
+                        <label for="countCreate">Количество</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer mb-1">
+                <button type="submit" class="modal-close waves-effect waves-green btn-flat">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:replace="~{fragments/template :: script}"></script>
+</body>
+</html>

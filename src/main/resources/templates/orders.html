@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<div th:replace="~{fragments/template :: head}"></div>
+<body>
+<div th:replace="~{fragments/template :: header}"></div>
+<div class="container center-align">
+    <div class="title-row">
+        <h3 class="title">История заказов</h3>
+        <div style="display: flex; justify-content: center; column-gap: 12px" >
+            <a sec:authorize="!hasAuthority('ADMIN')" th:href="@{/order/add}" class="waves-effect waves-light btn-small">Сформировать заказ</a>
+        </div>
+    </div>
+    <p class="balance-info">
+        <i class="material-icons left">info_outline</i>
+        <span th:text="'Всего потрачено: ' + ${cost} + '₽'"></span>
+    </p>
+    <div class="row wrap" style="display: flex; align-items: stretch">
+        <h3 class="col s12 center-x" style="width: 100%" th:if="${orders.size() == 0}">Заказов пока нет</h3>
+        <div class="col s12 m6 l4" th:each="item : ${orders}">
+            <div class="card horizontal m-0 card-goods">
+                <div class="card-stacked">
+                    <div class="card-content">
+                        <p th:if="${item.getUser() != null}" sec:authorize="hasAuthority('ADMIN')" class="card-content-item">От - <bold><span class="card-content-item-value" th:text="${item.getUser().getUsername()}"></span></bold></p>
+                        <p th:if="${item.getUser() != null}" sec:authorize="hasAuthority('ADMIN')" class="card-content-item">Телефон автора заказа - <bold><span class="card-content-item-value" th:text="${item.getUser().getPhone()}"></span></bold></p>
+                        <p th:if="${item.getUser() == null}" sec:authorize="hasAuthority('ADMIN')" class="card-content-item">От - <bold><span class="card-content-item-value">Deleted</span></bold></p>
+                        <p class="card-content-item">Id заказа - <bold><span class="card-content-item-value" th:text="${item.getId()}"></span></bold></p>
+                        <p class="card-content-item">Дата - <bold><span class="card-content-item-value" th:text="${item.getDateCreate()}"></span></bold></p>
+                        <p class="card-content-item">Цена - <bold><span class="card-content-item-value" th:text="${item.getPrice()}"></span> ₽</bold></p>
+                        <p th:if="${item.getWithDelivery()}" class="card-content-item">Получено - <bold><span class="card-content-item-value" th:text="${item.getDone() ? 'Да' : 'Нет'}"></span></bold></p>
+                        <p th:if="${item.getWithDelivery()}" class="card-content-item card-content-item-value"><a class="waves-effect waves-light btn-small modal-trigger text-button" th:href="'#' + ${item.getId()} + '_2'"><u>С доставкой</u></a></p>
+                        <p th:if="${!item.getWithDelivery()}" class="card-content-item card-content-item-value"><u>Без доставки</u></p>
+                        <p class="card-content-item">Кол-во товаров: <bold class="card-content-item-value"><span th:text="${item.getGoods().size()}"></span></bold></p>
+                        <form class="buttons-list buttons-list-orders" method="post" th:action="@{'/order/delete/' + ${item.getId()}}">
+                            <a class="waves-effect waves-light mini-btn btn-small modal-trigger" th:href="'#' + ${item.getId()}">Посмотреть товары</a>
+                            <a th:if="${!item.getDone() && item.getWithDelivery()}" class="waves-effect waves-light mini-btn btn-small modal-trigger" th:href="'#' + ${item.getId() + '_3'}">Подтвердить получение</a>
+                            <button sec:authorize="hasAuthority('ADMIN')" type="submit" class="waves-effect mini-btn btn-small waves-light red">Удалить</button>
+                        </form>
+                    </div>
+                    <div th:id="${item.getId()}" class="modal p0" style="background: white;">
+                        <div class="flex" style="display: flex; flex-wrap: wrap; background: white">
+                            <div class="col s12 m6 l4 p0 flex" style="margin: 0 !important;" th:each="item : ${item.getGoods()}">
+                                <div class="card horizontal m-0 card-goods no-shadow">
+                                    <div class="card-stacked">
+                                        <div class="card-content p-1">
+                                            <img th:if="${item.getImg() != null && item.getImg() != ''}" class="m-a mb-1" height="200px" width="auto" th:src="${item.getImg()}" />
+                                            <div th:if="${item.getImg() == null || item.getImg() == ''}" style="height: 200px; width: 100%" />
+                                            <p class="card-content-item">Тип - <bold class="card-content-item-value"><span th:text="${item.getGoodsType()}"></span></bold></p>
+                                            <p class="card-content-item">Название - <bold class="card-content-item-value"><span th:text="${item.getName()}"></span></bold></p>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:id="${item.getId()} + '_2'" class="modal p0 auto" style="background: white">
+                        <div th:if="${item.getCurier() == null}">Информации нет</div>
+                        <div th:if="${item.getCurier() != null}" class="horizontal m-0 card-orders no-shadow">
+                            <div class="card-stacked">
+                                <div class="card-content p-1">
+                                    <p class="card-content-item">Имя - <bold><span class="card-content-item-value" th:text="${item.getCurier().getName()}"></span></bold></p>
+                                    <p class="card-content-item">Телефон - <bold><span class="card-content-item-value" th:text="${item.getCurier().getPhone()}"></span></bold></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:id="${item.getId()} + '_3'" class="modal p0" style="background: white">
+                        <form class="col s12" method="post" th:action="@{'/order/' + ${item.getId()} + '/confirm'}" >
+                            <div class="modal-content">
+                                <h2>Вы уверены?</h2>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="modal-close waves-effect waves-green btn-flat">Да</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="~{fragments/template :: script}"></script>
+</body>
+</html>

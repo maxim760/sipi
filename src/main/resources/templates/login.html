@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<div th:replace="~{fragments/template :: head}"></div>
+<body>
+<div class="container container100">
+<div class="row mb-0 center-align">
+    <div class="shadow-card login-card">
+        <div th:if="${param.error}">
+            <div class="alert alert-danger mb-1">
+                Неправильный логин или пароль
+            </div>
+        </div>
+        <div th:if="${param.afterReg}">
+            <div class="alert alert-info mb-1">
+                Регистрация прошла успешно
+            </div>
+        </div>
+        <p class="flow-text">Вход в BellaPizza</p>
+        <p class="mb-1">Если нет аккаунта, <a th:href="@{/registration}">зарегистрируйтесь</a></p>
+        <form class="col s12" th:action="@{/login}" method="post">
+            <div class="row mb-1 mt-1">
+                <div class="input-field col s12">
+                    <input placeholder=" " required id="username" name="username" type="text" class="validate">
+                    <label for="username">Логин</label>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="input-field col s12">
+                    <input placeholder=" " required id="password" name="password" type="password" class="validate">
+                    <label for="password">Пароль</label>
+                </div>
+            </div>
+            <button type="submit" class="waves-effect waves-light btn btn-100">Отправить</button>
+        </form>
+    </div>
+</div>
+</div>
+<script th:replace="~{fragments/template :: script}"></script>
+</body>
+</html>
