@@ -1,0 +1,17 @@
+DOXYFILE_ENCODING      = UTF-8
+PROJECT_NAME           = "PIZZERIA"
+PROJECT_NUMBER         = 1.0
+PROJECT_BRIEF          = "Проект - веб сайт пиццерии с возможностью заказа самовывозом и доставкой."
+PROJECT_LOGO           = favicon.ico
+INPUT                  = src/main/java
+RECURSIVE              = YES
+FILE_PATTERNS          = *.java
+RECURSIVE              = YES
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+GENERATE_RTF           = NO
+GENERATE_MAN           = NO
+GENERATE_XML           = NO
+GENERATE_DOCBOOK       = NO
+GENERATE_AUTOGEN_DEF   = NO
+OUTPUT_DIRECTORY       = docs

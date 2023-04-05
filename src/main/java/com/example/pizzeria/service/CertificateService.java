@@ -13,15 +13,39 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * Класс сервис для сертификатов.
+ *
+ * @see CertificateEntity
+ */
+
 @Service
 public class CertificateService {
+
+    /**
+     * репозиторий для сертификатов
+     */
     @Autowired
     private CertificateRepo certificateRepo;
+    /**
+     * репозиторий для пользователей
+     */
     @Autowired
     private UserRepo userRepo;
+    /**
+     * репозиторий для профиля
+     */
     @Autowired
     private ProfileService profileService;
 
+    /**
+     *
+     * @param currentUser Текущий пользователь
+     * @param toUserID ID кому дарят сертификат
+     * @param certInfo Информация о сертификате
+     * @return сертификат
+     * @throws Exception
+     */
     public CertificateEntity create(UserEntity currentUser, UUID toUserID, CertificateEntity certInfo) throws Exception {
         CertificateEntity certificate = new CertificateEntity();
         UserEntity toUser = userRepo.findById(toUserID).orElseThrow(() -> new Exception("Пользователь не найден"));

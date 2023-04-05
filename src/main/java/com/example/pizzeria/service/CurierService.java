@@ -39,7 +39,8 @@ public class CurierService {
 
     public void delete(UUID curierId) throws Exception {
         CurierEntity curier = curierRepo.findById(curierId).orElseThrow(() -> new Exception("Не найдено"));
-        if(curier.getStatus() != "free") {
+        System.out.println(curier.getStatus());
+        if(!curier.getStatus().equals("free")) {
             throw new Exception("Курьер несет заказ, его нельзя удалить");
         }
         curierRepo.deleteById(curierId);

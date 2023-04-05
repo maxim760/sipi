@@ -2,6 +2,7 @@ package com.example.pizzeria.controller;
 
 import com.example.pizzeria.DTO.CreateCurierDTO;
 import com.example.pizzeria.entity.CurierEntity;
+import com.example.pizzeria.model.Certificate;
 import com.example.pizzeria.service.CurierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,12 +17,24 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Это контроллер класс для управления курьерами.
+ *
+ * @see Curier
+ */
+
+
 @Controller
 @RequestMapping("/curiers")
 public class CurierController {
     @Autowired
     private CurierService curierService;
 
+    /**
+     * Получение страницы курьеров
+     *
+     * @return страница курьеров
+     */
     @GetMapping
     public String getCurierPage(Model model, RedirectAttributes attrs) {
         List<CurierEntity> all = curierService.findAll();
@@ -29,6 +42,15 @@ public class CurierController {
         model.addAttribute("newCurierItem", new CreateCurierDTO());
         return "curiers";
     }
+
+    /**
+     * Редактирование информации о курьере
+     *
+     * @param curierItem
+     * @param curierId
+     * @param model
+     * @return страница с курьерами
+     */
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{curierId}/edit")

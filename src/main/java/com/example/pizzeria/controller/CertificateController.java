@@ -18,6 +18,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Это контроллер класс для управления сертификатами.
+ *
+ * @see CertificateEntity
+ */
+
 @Controller
 @RequestMapping("/certificate")
 public class CertificateController {
@@ -27,6 +33,11 @@ public class CertificateController {
     @Autowired
     private CertificateService certificateService;
 
+    /**
+     * Получение страницы сертификатов
+     *
+     * @return Страница сертификатов.
+     */
     @GetMapping
     public String getCertPage(@AuthenticationPrincipal UserEntity user, Model model) {
         val received = user.getDescReceivedCertififcates();
@@ -35,6 +46,13 @@ public class CertificateController {
         model.addAttribute("donated", Certificate.toModel(donated));
         return "certificates";
     }
+
+    /**
+     *
+     * Получение страницы для дарения сертификата
+     *
+     * @return Страница дарения сертификатов
+     */
     @GetMapping("/add")
     public String getAddCertPage(Model model, RedirectAttributes attrs) {
         val newCert = new CertificateEntity();
@@ -47,6 +65,12 @@ public class CertificateController {
         model.addAttribute("newUser", newUserFromAttr == null ? newUser : newUserFromAttr);
         return "addCert";
     }
+    /**
+     *
+     * Поиск пользователей на странице дарения сертификатов
+     *
+     * @return Страница дарения сертификатов с фильтрация по пользователям
+     */
     @PostMapping("/add")
     public String updateAddCertPage(Model model, UserEntity user, RedirectAttributes attrs) {
         UserEntity newUser = UserEntity.builder()
@@ -60,6 +84,13 @@ public class CertificateController {
         return "redirect:/certificate/add";
     }
 
+    /**
+     * Дарение сертификата другому пользователю
+     * @param currentUser Текущий пользователь
+     * @param certInfo Информация о сертификате
+     * @param toUserId id пользователя, которому дарят сертификат
+     * @return Страница сертификатов
+     */
     @PostMapping("/{toUserId}/add")
     public String addCertificate(
             RedirectAttributes attrs,
